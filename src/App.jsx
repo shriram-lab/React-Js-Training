@@ -17,11 +17,14 @@ import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextFieldDemo from './pages/TextFieldDemo';
 import InputDemo from './pages/InputDemo';
+import Login from './pages/Login';
+import NotFound from './pages/NotFound'
 import theme from './theme.js';
 import MathDemo from './components/MathDemo';
 import ChildrenDemo from './components/ChildrenDemo';
-import Trainee from './pages/Trainee'
-
+import Trainee from './pages/Trainee';
+import { BrowserRouter as Router, Link, NavLink, Route, Switch } from 'react-router-dom';
+import { AuthRoute, PrivateRoute } from './routes'
 // eslint-disable-next-line react/prefer-stateless-function
 class App extends Component {
   // eslint-disable-next-line no-useless-constructor
@@ -29,7 +32,7 @@ class App extends Component {
     super(props);
   }
 
-  child(event){
+  child(event) {
     return <ChildrenDemo first={2} operator="+" second={2} />;
     // return false;
   }
@@ -44,9 +47,22 @@ class App extends Component {
           <MathDemo first={2} operator="+" second={2} children={this.child} />
         </MuiThemeProvider> */}
 
-        <Trainee />
+        {/* <Trainee /> */}
 
-        
+        <Router>
+          <Switch>
+            <PrivateRoute exact path="/Login" component={Login}>
+            </PrivateRoute>
+            <AuthRoute path="/Trainee" component={Trainee}></AuthRoute>
+            <AuthRoute exact path="/" component={Trainee}></AuthRoute>
+            <AuthRoute path="/TextFieldDemo" component={TextFieldDemo}></AuthRoute>
+            <AuthRoute path="/InputDemo" component={InputDemo}></AuthRoute>
+            <AuthRoute path="/MathDemo" component={MathDemo}></AuthRoute>
+            <AuthRoute component={NotFound}></AuthRoute>
+          </Switch>
+        </Router>
+
+
       </>
     );
   }

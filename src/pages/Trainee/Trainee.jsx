@@ -34,8 +34,8 @@ export class Trainee extends Component {
   render() {
     return (
       <div>
-      <NavBar />
-      <br/>
+      {/* <NavBar />
+      <br/> */}
       <Button
           variant="outlined"
           color="primary"

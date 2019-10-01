@@ -35,12 +35,14 @@ class TextField extends Component {
               type="text"
               disabled={this.props.disable}
               error={this.props.error}
+              value={this.props.value}
             />
           ) : (
             <input
               style={Styles.InputStyle}
               onChange={e => this.props.handleChangeInput(e, "input")}
               type="text"
+              disabled={this.props.disable}
               onBlur={this.props.isTouched}
             />
           )}

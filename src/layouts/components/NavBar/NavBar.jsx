@@ -6,7 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
-
+import { BrowserRouter as Router,Link,Route,Switch,NavLink } from "react-router-dom";
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1
@@ -30,10 +30,11 @@ export default function NavBar() {
           <Typography variant="h6" className={classes.title}>
             Trainee Protal
           </Typography>
-          <Button color="inherit">TRAINEE</Button>
-          <Button color="inherit">TEXTFIELD DEMO</Button>
-          <Button color="inherit">INPUT DEMO</Button>
-          <Button color="inherit">CHILDREN DEMO</Button>
+          
+          <Button color="inherit"><Link style={{textDecoration:"none",color:"#fff"}} to="/Trainee">TRAINEE</Link></Button>
+          <Button color="inherit"><Link style={{textDecoration:"none",color:"#fff"}} to="/TextFieldDemo">TEXTFIELD DEMO</Link></Button>
+          <Button color="inherit"><Link style={{textDecoration:"none",color:"#fff"}} to="/InputDemo">INPUT DEMO</Link></Button>
+          <Button color="inherit"><Link style={{textDecoration:"none",color:"#fff"}} to="/MathDemo">CHILDREN DEMO</Link></Button>
           <Button color="inherit">Logout</Button>
         </Toolbar>
       </AppBar>
