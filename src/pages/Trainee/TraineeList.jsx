@@ -71,6 +71,7 @@ class TranieeList extends Component {
       trainees: trainees,
       editOpen: false,
       deleteOpen: false,
+      page:0,
       id: ""
     };
   }
@@ -137,6 +138,12 @@ class TranieeList extends Component {
       id: ""
     });
   };
+  handleChangePage = (event,nextPage) =>{
+    console.log(event,nextPage);
+    this.setState({
+      page:nextPage
+    })
+  }
   onSubmit = event => {
     const editdata = trainees.filter(person => {
       if (person.id == event.id) {
@@ -196,6 +203,10 @@ class TranieeList extends Component {
             order={this.state.order}
             onSort={this.handleSort}
             onSelect={this.handleSelect}
+            handleChangePage={this.handleChangePage}
+            rowPerPage = {10}
+            count = {100}
+            page={this.state.page}
             columns={[
               { field: "name", label: "Name" },
               {
@@ -230,7 +241,7 @@ class TranieeList extends Component {
 
 function TableData(props) {
   const classes = useStyles();
-  const { orderBy, order, onSort, onSelect } = props;
+  const { orderBy, order, onSort, onSelect,handleChangePage,rowPerPage,page,count } = props;
   return (
     <Paper className={classes.root}>
       <Table className={classes.table}>
@@ -284,19 +295,18 @@ function TableData(props) {
         </TableBody>
       </Table>
       <TablePagination
-        // rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[]}
         component="div"
-        count={100}
-        rowsPerPage={5}
-        page={1}
+        count={count}
+        rowsPerPage={rowPerPage}
+        page={page}
         backIconButtonProps={{
           "aria-label": "previous page"
         }}
         nextIconButtonProps={{
           "aria-label": "next page"
         }}
-        onChangePage={"handleChangePage"}
-        onChangeRowsPerPage={"handleChangeRowsPerPage"}
+        onChangePage={handleChangePage}
       />
     </Paper>
   );
