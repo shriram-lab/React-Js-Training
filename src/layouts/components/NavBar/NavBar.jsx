@@ -7,6 +7,9 @@ import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import { BrowserRouter as Router,Link,Route,Switch,NavLink } from "react-router-dom";
+
+import localStorageAuthHOC from "../../../configs/localStorage/localStorage";
+
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1
@@ -19,9 +22,16 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function NavBar() {
+ function NavBar(props) {
   const classes = useStyles();
-  
+
+  const {localStorageEvent} = props;
+
+  const logout = event =>{
+    
+    localStorageEvent.clearLocalItems();
+    localStorageEvent.setLocalItem('token','null');
+  }
 
   return (
     <div className={classes.root}>
@@ -35,9 +45,11 @@ export default function NavBar() {
           <Button color="inherit"><Link style={{textDecoration:"none",color:"#fff"}} to="/TextFieldDemo">TEXTFIELD DEMO</Link></Button>
           <Button color="inherit"><Link style={{textDecoration:"none",color:"#fff"}} to="/InputDemo">INPUT DEMO</Link></Button>
           <Button color="inherit"><Link style={{textDecoration:"none",color:"#fff"}} to="/MathDemo">CHILDREN DEMO</Link></Button>
-          <Button color="inherit">Logout</Button>
+          <Button color="inherit" onClick={logout}>Logout</Button>
         </Toolbar>
       </AppBar>
     </div>
   );
 }
+
+export default localStorageAuthHOC(NavBar);

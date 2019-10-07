@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable react/no-children-prop */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable import/extensions */
@@ -33,6 +34,11 @@ import Trainee from './pages/Trainee';
 import TraineeDetails from './pages/Trainee/TranieeDetails.jsx';
 import { AuthRoute, PrivateRoute } from './routes';
 // eslint-disable-next-line react/prefer-stateless-function
+
+import axios from 'axios';
+import localStorageAuthHOC from "./configs/localStorage/localStorage";
+
+
 class App extends Component {
   // eslint-disable-next-line no-useless-constructor
   constructor(props) {
@@ -45,6 +51,14 @@ class App extends Component {
   }
 
   render() {
+    const {localStorageEvent} = this.props;
+    if(localStorageEvent.getLocalItem('token')!=="null"){
+      axios.defaults.headers.common['Authorization'] = localStorageEvent.getLocalItem('token');
+    }else{
+      localStorageEvent.setLocalItem('token',"null");
+      axios.defaults.headers.common['Authorization'] = localStorageEvent.getLocalItem('token');
+    }
+    
     // eslint-disable-next-line keyword-spacing
     return (
       <>
@@ -74,4 +88,4 @@ class App extends Component {
   // eslint-disable-next-line padded-blocks
 }
 
-export default App;
+export default localStorageAuthHOC(App);

@@ -22,6 +22,7 @@ import * as yup from 'yup';
 
 import login from '../../lib/utils/api';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import localStorageAuthHOC from "../../configs/localStorage/localStorage";
 
 const SignupSchema = yup.object().shape({
   email: yup
@@ -49,6 +50,8 @@ export class Login extends Component {
   }
 
   render() {
+    // console.log(this.props)
+    const {localStorageEvent} = this.props;
     return (
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <Card
@@ -82,6 +85,7 @@ export class Login extends Component {
                 console.log(values);
                 setTimeout(() => {
                   login(values).then((data) => {
+                    localStorageEvent.setLocalItem('token','token');
                     if (data.response.data.status === 200) {
                       actions.setSubmitting(true);
                       this.props.history.push('/Trainee');
@@ -161,4 +165,4 @@ export class Login extends Component {
   }
 }
 
-export default Login;
+export default localStorageAuthHOC(Login);

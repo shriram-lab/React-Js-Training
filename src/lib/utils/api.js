@@ -8,10 +8,10 @@ import axios from 'axios';
 const url = 'https://express-training.herokuapp.com/api/user/login';
 
 function login(data) {
-  return axios
-    .post(url, data)
-    .then((response) => response.data)
-    .catch((error) => error);
+    return axios
+        .post(url, data)
+        .then((response) => response.data)
+        .catch((error) => error);
 }
 
 export default login;

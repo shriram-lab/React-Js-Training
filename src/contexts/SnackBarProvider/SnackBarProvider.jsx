@@ -15,7 +15,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import { Consumer, Provider } from "../index";
 
-import TraineeList from '../../pages/Trainee/TraineeList';
 
 // HOC Component
 
@@ -31,7 +30,7 @@ export default function Hoc(HocComponent) {
     }
 
     openSnackBar = (message,variant) => {
-      console.log(message);
+      // console.log(message);
       this.setState({
         status: true,
         message:message,
@@ -141,7 +140,7 @@ class SnackBars extends Component {
         <Consumer>
           {({ closeSnackbar, snackbarIsOpen, message,variant }) => (
             <>
-              {console.log(closeSnackbar)}
+              {/* {console.log(closeSnackbar)} */}
               <Snackbar
                 anchorOrigin={{
                   vertical: 'bottom',
