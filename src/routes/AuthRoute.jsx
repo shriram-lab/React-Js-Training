@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route, Link, Match, Redirect, Switch } from 'r
 import AuthLayout from '../layouts/AuthLayout/';
 
 const AuthRoute = ({ component: Component, ...rest }) => {
-    console.log(Component)
+    // console.log(Component)
     return (<Route {...rest} render={matchProps => (
         <AuthLayout>
             <Component {...matchProps} />

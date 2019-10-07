@@ -1,15 +1,16 @@
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-unused-vars */
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   BrowserRouter as Router,
   Route,
   Link,
   Switch,
   NavLink,
-  Redirect
-} from "react-router-dom";
-import trainees from "./data/traniee";
+  Redirect,
+} from 'react-router-dom';
 import Button from "@material-ui/core/Button";
 import AddDialog from "./components/AddDialog";
 import { makeStyles } from "@material-ui/core/styles";
@@ -35,30 +36,33 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import { TextField } from "formik-material-ui";
 import { Formik, Field, Form } from "formik";
 import * as yup from "yup";
+import trainees from "./data/traniee";
+import Hoc from '../../contexts/SnackBarProvider/SnackBarProvider';
+import { Consumer, Provider } from '../../contexts/index';
 
 const TranieeSchema = yup.object().shape({
   name: yup
     .string()
     .min(3)
-    .required("Name is required field."),
+    .required('Name is required field.'),
   email: yup
     .string()
-    .email("Email should be valid.")
-    .required("Email is required field")
+    .email('Email should be valid.')
+    .required('Email is required field'),
 });
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    width: "100%",
+    width: '100%',
     marginTop: theme.spacing(3),
-    overflowX: "auto"
+    overflowX: 'auto',
   },
   table: {
-    minWidth: 650
+    minWidth: 650,
   },
   stripped: {
-    background: "whitesmoke"
-  }
+    background: 'whitesmoke',
+  },
 }));
 
 class TranieeList extends Component {
@@ -66,101 +70,111 @@ class TranieeList extends Component {
     super(props);
     this.state = {
       open: false,
-      order: "asc",
-      orderBy: "",
-      trainees: trainees,
+      order: 'asc',
+      orderBy: '',
+      trainees,
       editOpen: false,
       deleteOpen: false,
-      page:0,
-      id: ""
+      page: 0,
+      id: '',
+      openSnack: false,
     };
+    console.log(props);
   }
-  handleClickOpen = event => {
+
+
+  handleClickOpen = (event) => {
     this.setState({
-      open: true
+      open: true,
     });
   };
 
-  handleClose = event => {
+  handleClose = (event) => {
     this.setState({
       open: false,
       deleteOpen: false,
       editOpen: false,
-      id: ""
+      id: '',
     });
   };
 
-  handleSubmit = event => {
+  handleSubmit = (event) => {
     this.setState({
-      open: false
+      open: false,
     });
     console.log(event);
   };
+
   handleSort = (event, order) => {
-    var sortData = "";
-    if (order == "asc") {
+    let sortData = '';
+    if (order == 'asc') {
       sortData = this.state.trainees.sort(ascSort(event));
       this.setState({
-        order: "desc",
-        trainees: trainees
+        order: 'desc',
+        trainees,
       });
     } else {
       sortData = this.state.trainees.sort(descSort(event));
       this.setState({
-        order: "asc",
-        trainees: trainees
+        order: 'asc',
+        trainees,
       });
     }
   };
-  handleSelect = event => {
+
+  handleSelect = (event) => {
     this.props.history.push(`/Trainee/${event}`);
   };
 
-  handleEdit = event => {
-    const editData = trainees.filter(person => person.id == event);
+  handleEdit = (event) => {
+    const editData = trainees.filter((person) => person.id == event);
     this.setState({
       editOpen: true,
-      id: editData
-    });
-  };
-  handleDelete = event => {
-    this.setState({
-      deleteOpen: true,
-      id: event
+      id: editData,
     });
   };
 
-  deleteRecord = event => {
-    const delData = trainees.filter(person => person.id == event);
-    console.log("Deleted item", delData[0]);
+  handleDelete = (event) => {
     this.setState({
-      deleteOpen: false,
-      id: ""
+      deleteOpen: true,
+      id: event,
     });
   };
-  handleChangePage = (event,nextPage) =>{
-    console.log(event,nextPage);
+
+  deleteRecord = (event) => {
+    const delData = trainees.filter((person) => person.id == event);
+    console.log('Deleted item', delData[0]);
     this.setState({
-      page:nextPage
-    })
-  }
-  onSubmit = event => {
-    const editdata = trainees.filter(person => {
+      deleteOpen: false,
+      id: '',
+    });
+  };
+
+  handleChangePage = (event, nextPage) => {
+    console.log(event, nextPage);
+    this.setState({
+      page: nextPage,
+    });
+  };
+
+  onSubmit = (event) => {
+    const editdata = trainees.filter((person) => {
       if (person.id == event.id) {
+        this.props.openSnackBar("Trainee Edited Successfully !")
         person.name = event.name;
         person.email = event.email;
         return person;
       }
     });
-    console.log("Trainee edited succesfully.", editdata[0]);
+    console.log('Trainee edited succesfully.', editdata[0]);
     this.setState({
       editOpen: false,
-      id: ""
+      id: '',
     });
   };
 
   render() {
-    const listtrainee = trainees.map(items => (
+    const listtrainee = trainees.map((items) => (
       <li>
         <Link to={`/Trainee/${items.id}`}>{items.name}</Link>
       </li>
@@ -168,7 +182,7 @@ class TranieeList extends Component {
     return (
       <>
         <div>
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Button
               variant="outlined"
               color="primary"
@@ -176,7 +190,11 @@ class TranieeList extends Component {
             >
               Add Traineelist
             </Button>
+
           </div>
+          {/* <SnackBarProvider>
+          <ButtonA />
+          </SnackBarProvider> */}
           <AddDialog
             open={this.state.open}
             onClose={this.handleClose}
@@ -204,32 +222,32 @@ class TranieeList extends Component {
             onSort={this.handleSort}
             onSelect={this.handleSelect}
             handleChangePage={this.handleChangePage}
-            rowPerPage = {10}
-            count = {100}
+            rowPerPage={10}
+            count={100}
             page={this.state.page}
             columns={[
-              { field: "name", label: "Name" },
+              { field: 'name', label: 'Name' },
               {
-                field: "email",
-                label: "Email Address",
-                format: value => value && value.toUpperCase()
+                field: 'email',
+                label: 'Email Address',
+                format: (value) => value && value.toUpperCase(),
               },
               {
-                field: "createdAt",
-                label: "Date",
-                align: "right",
-                format: getDateFormatted
-              }
+                field: 'createdAt',
+                label: 'Date',
+                align: 'right',
+                format: getDateFormatted,
+              },
             ]}
             actions={[
               {
                 icon: <EditIcon />,
-                handler: this.handleEdit
+                handler: this.handleEdit,
               },
               {
                 icon: <DeleteIcon />,
-                handler: this.handleDelete
-              }
+                handler: this.handleDelete,
+              },
             ]}
           />
           {/* <ul>{listtrainee}</ul> */}
@@ -241,13 +259,22 @@ class TranieeList extends Component {
 
 function TableData(props) {
   const classes = useStyles();
-  const { orderBy, order, onSort, onSelect,handleChangePage,rowPerPage,page,count } = props;
+  const {
+    orderBy,
+    order,
+    onSort,
+    onSelect,
+    handleChangePage,
+    rowPerPage,
+    page,
+    count,
+  } = props;
   return (
     <Paper className={classes.root}>
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
-            {props.columns.map(row => (
+            {props.columns.map((row) => (
               <TableCell component="th" scope="row" align={row.align}>
                 <TableSortLabel
                   direction={order}
@@ -264,10 +291,10 @@ function TableData(props) {
             <TableRow
               key={row.name}
               hover
-              style={{ cursor: "pointer" }}
+              style={{ cursor: 'pointer' }}
               className={index % 2 === 0 ? classes.stripped : null}
             >
-              {props.columns.map(column => (
+              {props.columns.map((column) => (
                 <TableCell
                   component="th"
                   scope="row"
@@ -279,7 +306,7 @@ function TableData(props) {
                     : row[column.field]}
                 </TableCell>
               ))}
-              {props.actions.map(action => (
+              {props.actions.map((action) => (
                 <>
                   <TableCell
                     component="th"
@@ -301,10 +328,10 @@ function TableData(props) {
         rowsPerPage={rowPerPage}
         page={page}
         backIconButtonProps={{
-          "aria-label": "previous page"
+          'aria-label': 'previous page',
         }}
         nextIconButtonProps={{
-          "aria-label": "next page"
+          'aria-label': 'next page',
         }}
         onChangePage={handleChangePage}
       />
@@ -313,9 +340,9 @@ function TableData(props) {
 }
 
 function EditDialog(props) {
-  let name = "";
-  let email = "";
-  let id = "";
+  let name = '';
+  let email = '';
+  let id = '';
   if (props.id) {
     name = props.id[0].name;
     email = props.id[0].email;
@@ -335,14 +362,16 @@ function EditDialog(props) {
             <DialogContentText>Enter Trainee Details</DialogContentText>
             <Formik
               initialValues={{
-                name: name,
-                email: email,
-                id: id
+                name,
+                email,
+                id,
               }}
               validationSchema={TranieeSchema}
-              onSubmit={values => props.onSubmit(values)}
+              onSubmit={(values) => props.onSubmit(values)}
             >
-              {({ errors, touched, isValid, values, handleChange }) => (
+              {({
+ errors, touched, isValid, values, handleChange 
+}) => (
                 <Form>
                   <Field
                     name="name"
@@ -353,7 +382,7 @@ function EditDialog(props) {
                     variant="outlined"
                     required
                     InputLabelProps={{
-                      shrink: true
+                      shrink: true,
                     }}
                     margin="normal"
                     InputProps={{
@@ -361,9 +390,9 @@ function EditDialog(props) {
                         <InputAdornment position="start">
                           <AccountCircle />
                         </InputAdornment>
-                      )
+                      ),
                     }}
-                  ></Field>
+                   />
                   <Field
                     name="email"
                     label="Email Address"
@@ -373,7 +402,7 @@ function EditDialog(props) {
                     variant="outlined"
                     required
                     InputLabelProps={{
-                      shrink: true
+                      shrink: true,
                     }}
                     margin="normal"
                     InputProps={{
@@ -381,9 +410,9 @@ function EditDialog(props) {
                         <InputAdornment position="start">
                           <EmailIcon />
                         </InputAdornment>
-                      )
+                      ),
                     }}
-                  ></Field>
+                   />
                   <DialogActions>
                     <Button
                       onClick={props.handleClose}
@@ -393,7 +422,6 @@ function EditDialog(props) {
                       Cancel
                     </Button>
                     <Button
-                      onClick={props.handleClose}
                       variant="contained"
                       color="secondary"
                       disabled={!isValid}
@@ -423,7 +451,7 @@ function DeleteDialog(props) {
           aria-describedby="alert-dialog-description"
           fullWidth
         >
-          <DialogTitle id="alert-dialog-title">{"Remove Trainee"}</DialogTitle>
+          <DialogTitle id="alert-dialog-title">Remove Trainee</DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
               Are you really want to delete this traniee ?
@@ -452,4 +480,4 @@ function DeleteDialog(props) {
   );
 }
 
-export default TranieeList;
+export default Hoc(TranieeList);

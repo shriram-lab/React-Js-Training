@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Link, Match, Redirect, Switch } from 'r
 import PrivateLayout from '../layouts/PrivateLayout';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
-    console.log(Component)
+    // console.log(Component)
     return (<Route {...rest} render={matchProps => (
 
         <PrivateLayout>
