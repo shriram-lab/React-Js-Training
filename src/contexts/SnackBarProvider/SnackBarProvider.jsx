@@ -26,14 +26,16 @@ export default function Hoc(HocComponent) {
       this.state = {
         status: false,
         message: '',
+        variant:'success'
       };
     }
 
-    openSnackBar = (message) => {
+    openSnackBar = (message,variant) => {
       console.log(message);
       this.setState({
         status: true,
-        message,
+        message:message,
+        variant:variant
       });
     };
 
@@ -52,6 +54,7 @@ export default function Hoc(HocComponent) {
         closeSnackbar: this.closeSnackBar,
         snackbarIsOpen: this.state.status,
         message: this.state.message,
+        variant:this.state.variant
       };
       return (
         <div>
@@ -136,7 +139,7 @@ class SnackBars extends Component {
     return (
       <div className="Snackbars">
         <Consumer>
-          {({ closeSnackbar, snackbarIsOpen, message }) => (
+          {({ closeSnackbar, snackbarIsOpen, message,variant }) => (
             <>
               {console.log(closeSnackbar)}
               <Snackbar
@@ -150,7 +153,7 @@ class SnackBars extends Component {
               >
                 <MySnackbarContentWrapper
                   onClose={closeSnackbar}
-                  variant="success"
+                  variant={variant}
                   message={message}
                 />
               </Snackbar>

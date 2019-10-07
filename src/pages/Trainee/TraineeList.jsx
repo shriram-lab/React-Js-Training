@@ -38,7 +38,8 @@ import { Formik, Field, Form } from "formik";
 import * as yup from "yup";
 import trainees from "./data/traniee";
 import Hoc from '../../contexts/SnackBarProvider/SnackBarProvider';
-import { Consumer, Provider } from '../../contexts/index';
+import Moment from 'moment';
+
 
 const TranieeSchema = yup.object().shape({
   name: yup
@@ -102,6 +103,7 @@ class TranieeList extends Component {
     this.setState({
       open: false,
     });
+    this.props.openSnackBar("Trainee Added Successfully !","success");
     console.log(event);
   };
 
@@ -148,6 +150,13 @@ class TranieeList extends Component {
       deleteOpen: false,
       id: '',
     });
+    const compareDate = Moment("14-02-2019",'DD-MM-YYYY').format("DD-MM-YYYY");
+    const created = Moment(delData[0].createdAt).format("DD-MM-YYYY");
+    if(created > compareDate){
+      this.props.openSnackBar("Trainee Deleted Successfully!","success");
+    }else{
+      this.props.openSnackBar("Trainee could'nt Delete!","error");
+    }
   };
 
   handleChangePage = (event, nextPage) => {
@@ -160,7 +169,7 @@ class TranieeList extends Component {
   onSubmit = (event) => {
     const editdata = trainees.filter((person) => {
       if (person.id == event.id) {
-        this.props.openSnackBar("Trainee Edited Successfully !")
+        this.props.openSnackBar("Trainee Edited Successfully !","success")
         person.name = event.name;
         person.email = event.email;
         return person;
