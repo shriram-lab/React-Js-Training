@@ -52,7 +52,8 @@ class App extends Component {
 
   render() {
     const {localStorageEvent} = this.props;
-    if(localStorageEvent.getLocalItem('token')!=="null"){
+    
+    if(localStorageEvent.getLocalItem('token')!=null){
       axios.defaults.headers.common['Authorization'] = localStorageEvent.getLocalItem('token');
     }else{
       localStorageEvent.setLocalItem('token',"null");
