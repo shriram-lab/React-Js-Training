@@ -26,6 +26,9 @@ import { login } from '../../lib/utils/api';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import localStorageAuthHOC from '../../configs/localStorage/localStorage';
 
+// head.trainer@successive.tech
+// Training@123
+
 const SignupSchema = yup.object().shape({
   email: yup
     .string()
@@ -79,8 +82,8 @@ export class Login extends Component {
 
             <Formik
               initialValues={{
-                email: '',
-                password: '',
+                email: 'head.trainer@successive.tech',
+                password: 'Training@12',
               }}
               validationSchema={SignupSchema}
               onSubmit={(values, actions) => {
@@ -90,12 +93,14 @@ export class Login extends Component {
                       localStorageEvent.setLocalItem('token', data.data);
                       actions.setSubmitting(true);
                       this.props.history.push('/Trainee');
-                    } else if (data.response.status != 200) {
+                    } else if (data.isAxiosError || data.response.status != 200) {
                       actions.setSubmitting(false);
                     } else {
                       actions.setSubmitting(false);
                     }
-                  });
+                  }).catch((error)=>{
+                    actions.setSubmitting(false);
+                  });;
                 }, 2000);
               }}
             >

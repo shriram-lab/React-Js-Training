@@ -6,7 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
-import { BrowserRouter as Router,Link,Route,Switch,NavLink } from "react-router-dom";
+import { BrowserRouter as Router,Link,Route,Switch,NavLink,Redirect, withRouter  } from "react-router-dom";
 
 import localStorageAuthHOC from "../../../configs/localStorage/localStorage";
 
@@ -26,11 +26,11 @@ const useStyles = makeStyles(theme => ({
   const classes = useStyles();
 
   const {localStorageEvent} = props;
-
-  const logout = event =>{
-    
+  const logout = () =>{
     localStorageEvent.clearLocalItems();
     localStorageEvent.setLocalItem('token','null');
+    props.history.push('/Login');
+    
   }
 
   return (
@@ -52,4 +52,4 @@ const useStyles = makeStyles(theme => ({
   );
 }
 
-export default localStorageAuthHOC(NavBar);
+export default localStorageAuthHOC(withRouter(NavBar));

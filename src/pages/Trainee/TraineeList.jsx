@@ -28,6 +28,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Paper from '@material-ui/core/Paper';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import TablePagination from '@material-ui/core/TablePagination';
@@ -79,6 +80,13 @@ const useStyles = makeStyles((theme) => ({
     background: 'whitesmoke',
   },
 }));
+const styles = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  marginTop: -12,
+  marginLeft: -12,
+};
 
 class TranieeList extends Component {
   constructor(props) {
@@ -93,8 +101,9 @@ class TranieeList extends Component {
       page: 0,
       id: '',
       skip: 0,
-      limit: 20,
+      limit: 10,
       openSnack: false,
+      isDeletesubmit:false,
     };
     console.log(props);
   }
@@ -115,16 +124,28 @@ class TranieeList extends Component {
     });
   };
 
-  handleSubmit = (event) => {
-    debugger;
-    this.setState({
-      open: false,
-    });
+  handleSubmit = (event,actions) => {
+    
+    
     addTrainee(event).then((data) => {
-      console.log(data);
+      if(data.status=="ok"){
+        
+        this.props.openSnackBar('Trainee Added Successfully !', 'success');
+        this.setState({
+          open: false,
+        });
+        
+      }else if(data.isAxiosError){
+        actions.setSubmitting(false);
+        this.props.openSnackBar(`${data.response.data.message}`, 'error');
+    
+      }else{
+        actions.setSubmitting(false);
+        this.props.openSnackBar('Somthing went wrong please try again', 'error');
+      }
+    
     });
-    this.props.openSnackBar('Trainee Added Successfully !', 'success');
-    console.log(event);
+    
   };
 
   handleSort = (event, order) => {
@@ -164,24 +185,48 @@ class TranieeList extends Component {
   };
 
   deleteRecord = (event) => {
+    this.setState({
+      isDeletesubmit:true
+    });
     const delData = this.state.trainees.filter((person) => person._id == event);
     console.log('Deleted item', delData[0]);
+
 
     const compareDate = Moment('14-02-2019', 'DD-MM-YYYY').format('DD-MM-YYYY');
     const created = Moment(delData[0].createdAt).format('DD-MM-YYYY');
     if (created > compareDate) {
       deleteTrainee(delData[0]).then((data) => {
-        this.props.openSnackBar('Trainee Deleted Successfully !', 'success');
+
+        if(data.status=="ok"){
+          this.props.openSnackBar('Trainee Deleted Successfully !', 'success');
         console.log(data);
         this.setState({
           deleteOpen: false,
+          isDeletesubmit:false,
           id: '',
         });
+        }else if(data.isAxiosError){
+          this.setState({
+            deleteOpen: false,
+            isDeletesubmit:false,
+            id: '',
+          });
+          this.props.openSnackBar(`${data.response.data.message}`, 'error');
+        }else{
+          this.setState({
+            deleteOpen: false,
+            isDeletesubmit:false,
+            id: '',
+          });
+          this.props.openSnackBar('Trainee Deleted Successfully !', 'success');
+        }
+        
       });
     } else {
       this.props.openSnackBar("Trainee could'nt Delete!", 'error');
       this.setState({
         deleteOpen: false,
+        isDeletesubmit:false,
         id: '',
       });
     }
@@ -203,36 +248,54 @@ class TranieeList extends Component {
     });
   };
 
-  onSubmit = (event) => {
+  onSubmit = (event,actions) => {
+  
     const editdata = this.state.trainees.filter((person) => {
       if (person._id == event.id) {
         person.name = event.name;
         person.email = event.email;
         person.id = event.id;
         editTrainee(person).then((data) => {
-          this.props.openSnackBar('Trainee Edited Successfully !', 'success');
+          if(data.status=="ok"){
+            this.props.openSnackBar('Trainee Edited Successfully !', 'success');
           console.log(data);
           console.log('Trainee edited succesfully.', person);
           this.setState({
             editOpen: false,
             id: '',
           });
+          }else if(data.isAxiosError){
+            actions.setSubmitting(false);
+            this.props.openSnackBar(`${data.response.data.message}`, 'error');
+          }else{
+            actions.setSubmitting(false);
+            this.props.openSnackBar('Somting went worng please try again !', 'error');
+          }
+          
+        }).catch((error)=>{
+          this.props.openSnackBar('Somting went worng please try again !', 'error');
+          actions.setSubmitting(false);
         });
       }
     });
   };
 
   componentDidMount() {
-    getTrainess(this.state.skip,20).then((data) => {
+    getTrainess(this.state.skip,this.state.limit).then((data) => {
       if (data.status === 'ok') {
         console.log(data);
         this.setState({
           trainees: data.data.records,
         });
+      }else if(data.isAxiosError){
+        this.props.openSnackBar(`${data.response.data.message}`, 'error');
+      }else{
+        this.props.openSnackBar('Somting went worng please try again !', 'error');
       }
+    }).catch((error)=>{
+      this.props.openSnackBar('Somting went worng please try again !', 'error');
     });
   }
-
 
   render() {
     // const listtrainee = trainees.map((items) => (
@@ -266,6 +329,7 @@ class TranieeList extends Component {
             handleClose={this.handleClose}
             id={this.state.id}
             deleteRecord={this.deleteRecord}
+            isDeletesubmit={this.state.isDeletesubmit}
           />
           <EditDialog
             open={this.state.editOpen}
@@ -341,15 +405,16 @@ function EditDialog(props) {
             <DialogContentText>Enter Trainee Details</DialogContentText>
             <Formik
               initialValues={{
-                name,
-                email,
                 id,
+                name,
+                email
+
               }}
               validationSchema={TranieeSchema}
-              onSubmit={(values) => props.onSubmit(values)}
+              onSubmit={(values,actions) => props.onSubmit(values,actions)}
             >
               {({
-                errors, touched, isValid, values, handleChange,
+                errors, touched, isValid,isSubmitting, values, handleChange,
               }) => (
                 <Form>
                   <Field
@@ -403,10 +468,13 @@ function EditDialog(props) {
                     <Button
                       variant="contained"
                       color="secondary"
-                      disabled={!isValid}
+                      disabled={!isValid || isSubmitting}
                       type="submit"
                     >
                       Submit
+                      {isSubmitting && (
+                      <CircularProgress size={24} style={styles} />
+                    )}
                     </Button>
                   </DialogActions>
                 </Form>
@@ -448,9 +516,13 @@ function DeleteDialog(props) {
               onClick={() => props.deleteRecord(props.id)}
               variant="contained"
               color="secondary"
+              disabled={props.isDeletesubmit}
               autoFocus
             >
               Delete
+              {props.isDeletesubmit && (
+                      <CircularProgress size={24} style={styles} />
+                    )}
             </Button>
           </DialogActions>
         </Dialog>

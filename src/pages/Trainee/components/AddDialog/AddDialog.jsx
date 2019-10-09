@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React, { Component } from "react";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -9,6 +10,7 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import InputLabel from "@material-ui/core/InputLabel";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import EmailIcon from "@material-ui/icons/Email";
+import CircularProgress from '@material-ui/core/CircularProgress';
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 import { TextField } from "formik-material-ui";
 import { Formik, Field, Form } from "formik";
@@ -36,6 +38,14 @@ const SignupSchema = yup.object().shape({
     .oneOf([yup.ref("password"), null], "Passwords must match")
     .required("Confirm-Password is required field")
 });
+
+const styles = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  marginTop: -12,
+  marginLeft: -12,
+};
 
 export class AddDialog extends Component {
   constructor(props) {
@@ -65,9 +75,9 @@ export class AddDialog extends Component {
                 cpassword: ""
               }}
               validationSchema={SignupSchema}
-              onSubmit={values => onSubmit(values)}
+              onSubmit={(values,actions) => onSubmit(values,actions)}
             >
-              {({ errors, isValid, touched, values, handleChange }) => (
+              {({ errors, isValid, touched, values,isSubmitting, handleChange }) => (
                 <Form>
                   <Field
                     name="name"
@@ -162,10 +172,13 @@ export class AddDialog extends Component {
                     <Button
                       variant="contained"
                       type="submit"
-                      disabled={!isValid}
+                      disabled={!isValid || isSubmitting}
                       color="secondary"
                     >
                       Submit
+                      {isSubmitting && (
+                      <CircularProgress size={24} style={styles} />
+                    )}
                     </Button>
                   </div>
                 </Form>

@@ -4,9 +4,9 @@ const PrivateLayout = ({children, ...rest}) => {
     console.log(children)
     return (
       <div>
-        <div>{children}</div>
         <div>
-          <Footer></Footer>
+        {children}
+        <Footer></Footer>
         </div>
       </div>
     )

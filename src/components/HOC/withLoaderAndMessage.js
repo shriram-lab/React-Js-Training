@@ -9,45 +9,45 @@ import React, { Component } from 'react';
 
 
 function withLoaderAndMessage(WrapperComponent) {
-  return class extends Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-        loader: false,
-        dataLen: [],
-      };
-      console.log('HOC call ', props);
-    }
+    return class extends Component {
+        constructor(props) {
+            super(props);
+            this.state = {
+                loader: false,
+                dataLen: [],
+            };
+            // console.log('HOC call ', props);
+        }
 
-    loaderOn = (event) => {
-      this.setState({
-        loader: true,
-        dataLen: this.props.data.length,
-      });
-    }
+        loaderOn = (event) => {
+            this.setState({
+                loader: true,
+                dataLen: this.props.data.length,
+            });
+        }
 
-    loaderOff= (event) => {
-      this.setState({
-        loader: false,
-        dataLen: this.props.data.length,
-      });
-    }
+        loaderOff = (event) => {
+            this.setState({
+                loader: false,
+                dataLen: this.props.data.length,
+            });
+        }
 
-    render() {
-      console.log('hocbb', this.props);
-      return (
-        <>
-          {
-              (this.props.data.length < 0 ? this.loaderOn : this.loaderOff)
-          }
-          
-          <WrapperComponent dataLen={this.props.data.length} loader={this.state.loader} {...this.props} />
-        </>
+        render() {
+            // console.log('hocbb', this.props);
+            return ( < > {
+                    (this.props.data.length < 0 ? this.loaderOn : this.loaderOff)
+                }
+
+                <
+                WrapperComponent dataLen = { this.props.data.length }
+                loader = { this.state.loader } {...this.props }
+                /> </ >
 
 
-      );
-    }
-  };
+            );
+        }
+    };
 }
 
 

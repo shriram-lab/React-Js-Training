@@ -52,7 +52,7 @@ class TableData extends Component {
   }
 
   render() {
-    console.log('table data props HOc', this.props);
+    // console.log('table data props HOc', this.props);
 
     const {
       orderBy,
